@@ -1,72 +1,233 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SSRadio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSRadio 控制台</title>
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 1em; }
-    button, input, select { margin-top: 0.5em; padding: 0.5em; width: 100%; }
-    .row { display: flex; gap: 1em; }
-    .col { flex: 1; }
-    textarea { width: 100%; height: 200px; margin-top: 1em; font-family: monospace; }
+    :root {
+      --primary: #2196F3;
+      --success: #4CAF50;
+      --danger: #f44336;
+      --bg: #f5f5f5;
+      --card-bg: #fff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      background: var(--bg);
+      color: #333;
+      padding: 1rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      color: #1a237e;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    h2 {
+      color: #3f51b5;
+      margin: 1.5rem 0;
+      font-size: 1.3rem;
+    }
+
+    h3 {
+      color: #666;
+      margin: 1rem 0;
+      font-size: 1.1rem;
+    }
+
+    .row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    input, select, textarea, button {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(33,150,243,0.1);
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 0.8rem 1.5rem;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-success {
+      background: var(--success);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    #terminal {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 6px;
+      padding: 1rem;
+      height: 200px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+    }
+
+    #status {
+      padding: 0.5rem;
+      background: #fff;
+      border-radius: 4px;
+      margin: 1rem 0;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .row {
+        flex-direction: column;
+      }
+      
+      .col {
+        width: 100%;
+      }
+      
+      button {
+        padding: 0.8rem;
+      }
+      
+      .container {
+        padding: 0.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      html {
+        font-size: 14px;
+      }
+      
+      .card {
+        padding: 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>SSRadio 控制台</h1>
+  <div class="container">
+    <h1>📻 SSRadio 控制台</h1>
 
-  <div class="row">
-    <button onclick="connectSerial()">连接串口</button>
-    <button onclick="disconnectSerial()">断开串口</button>
+    <div class="card">
+
+      <p id="status">📶 串口状态：未连接</p>
+
+      <div class="row">
+        <button class="col" onclick="connectSerial()">🔗 连接串口</button>
+        <button class="col btn-danger" onclick="disconnectSerial()">❌ 断开串口</button>
+      </div>
+
+
+      <h2>⏰ 时间/日期设置</h2>
+      <div class="row">
+        <div class="col">
+          <input id="timeInput" placeholder="HH:MM:SS" type="time">
+          <div class="row">
+            <button onclick="sendCmd('get_time')">🕒 查询时间</button>
+            <button class="btn-success" onclick="autoSetTime()">⚡ 自动设置</button>
+          </div>
+        </div>
+        <div class="col">
+          <input id="dateInput" placeholder="YYYY-MM-DD" type="date">
+          <div class="row">
+            <button onclick="sendCmd('get_date')">📅 查询日期</button>
+            <button class="btn-success" onclick="autoSetDate()">⚡ 自动设置</button>
+          </div>
+        </div>
+      </div>
+
+      <h2>🔑 设备授权</h2>
+      <input id="block16" placeholder="16字节授权码 (32位HEX)">
+      <button class="btn-success" onclick="write16BytesToEEPROM()">💾 写入授权码</button>
+
+      <h2>⚙️ 系统操作</h2>
+      <button class="btn-danger" onclick="sendCmd('reboot')">🔄 重启设备</button>
+    </div>
+
+    <div class="card">
+      <h2>📠 串口终端</h2>
+      <textarea id="terminal" readonly></textarea>
+    </div>
+
+    <div class="card">
+      <h2>💻 开发选项</h2>
+      <h3>EEPROM 操作</h3>
+      <div class="row">
+        <div class="col">
+          <input id="eaddr" placeholder="地址 (0-8191)" type="number">
+          <input id="eval" placeholder="值 (十进制)" type="number">
+          <div class="row">
+            <button onclick="sendCmd(`eeprom_write ${eaddr.value} ${eval.value}`)">📝 写入</button>
+            <button onclick="sendCmd(`eeprom_read ${eaddr.value}`)">📖 读取</button>
+          </div>
+        </div>
+        <div class="col">
+          <input id="elen" placeholder="长度 (<=32)" type="number">
+          <input id="eblock" placeholder="HEX 数据">
+          <div class="row">
+            <button onclick="sendCmd(`eeprom_write_block ${eaddr.value} ${eblock.value}`)">📦 写入块</button>
+            <button onclick="sendCmd(`eeprom_read_block ${eaddr.value} ${elen.value}`)">📦 读取块</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <p id="status">串口状态：未连接</p>
-
-  <h3>时间/日期</h3>
-  <div class="row">
-    <div class="col">
-      <input id="timeInput" placeholder="HH:MM:SS">
-      <button onclick="sendCmd(`set_time ${timeInput.value}`)">设置时间</button>
-      <button onclick="sendCmd('get_time')">查询时间</button>
-    </div>
-    <div class="col">
-      <input id="dateInput" placeholder="YYYY-MM-DD">
-      <button onclick="sendCmd(`set_date ${dateInput.value}`)">设置日期</button>
-      <button onclick="sendCmd('get_date')">查询日期</button>
-    </div>
-  </div>
-
-
-  <h3>设备授权</h3>
-  <input id="block16" placeholder="输入16字节的授权码HEX，如 00112233AABBCCDDEEFF112233445566">
-  <button onclick="write16BytesToEEPROM()">写入授权码</button>
-
-  <h3>系统操作</h3>
-  <button onclick="sendCmd('reboot')">重启设备</button>
-
-  <h3>串口输出</h3>
-  <textarea id="terminal" readonly></textarea>
-
-  <h2>开发人员选项</h2>
-  <h4>直接操作EEPROM，涉及波段设置，请谨慎操作！</h4>
-  <div class="row">
-    <div class="col">
-      <input id="eaddr" placeholder="地址 (0-8191)">
-      <input id="eval" placeholder="值 (十进制)">
-      <button onclick="sendCmd(`eeprom_write ${eaddr.value} ${eval.value}`)">写入 1 字节</button>
-      <button onclick="sendCmd(`eeprom_read ${eaddr.value}`)">读取 1 字节</button>
-    </div>
-    <div class="col">
-      <input id="elen" placeholder="长度 (<=32)">
-      <input id="eblock" placeholder="HEX 数据，如 AABBCC">
-      <button onclick="sendCmd(`eeprom_write_block ${eaddr.value} ${eblock.value}`)">写入块</button>
-      <button onclick="sendCmd(`eeprom_read_block ${eaddr.value} ${elen.value}`)">读取块</button>
-    </div>
-  </div>
-
-
 
   <script>
     let port, reader, writer;
+    let pendingConfirm = null;
 
     async function connectSerial() {
       try {
@@ -116,6 +277,11 @@
         if (done) break;
         terminal.value += value;
         terminal.scrollTop = terminal.scrollHeight;
+
+        // 如果有待确认回调并且收到设备确认，执行回调
+        if (pendingConfirm && /OK|TIME SET|DATE SET/i.test(value)) {
+          pendingConfirm();
+        }
       }
     }
 
@@ -124,14 +290,47 @@
       await writer.write(cmd.trim() + '\n');
     }
 
+    function autoSetTime() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      const timeStr = `${hh}:${mm}:${ss}`;
+
+      pendingConfirm = () => {
+        alert('🚀 时间设置成功：' + timeStr);
+        pendingConfirm = null;
+      };
+      sendCmd(`set_time ${timeStr}`);
+    }
+
+    function autoSetDate() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const dateStr = `${yyyy}-${mm}-${dd}`;
+
+      pendingConfirm = () => {
+        alert('📅 日期设置成功：' + dateStr);
+        pendingConfirm = null;
+      };
+      sendCmd(`set_date ${dateStr}`);
+    }
+
     function write16BytesToEEPROM() {
       const hex = document.getElementById('block16').value.trim();
       if (hex.length !== 32) {
         alert("请输入 16 字节（32 个 HEX 字符）！");
         return;
       }
+      pendingConfirm = () => {
+        alert('✅ 授权码写入成功');
+        pendingConfirm = null;
+      };
       sendCmd(`eeprom_write_block 100 ${hex}`);
     }
   </script>
+
 </body>
 </html>
