@@ -225,7 +225,7 @@
           <button onclick="window.open('https://5breeze.github.io/ssradio/SSradio制板文件.zip', '_blank')">🔗 点击下载Gerber制板文件</button>
         </div>
         <div class="col">
-          <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio_V1.hex', '_blank')">🔗 点击下载V1版本固件</button>
+          <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio_V2.hex', '_blank')">🔗 点击下载V2版本固件</button>
         </div>
       </div>
       <div>提示：本设备支持DFU下载，下载STM32DFU驱动，连接USB，按下按钮中键后上电进入DFU烧录模式，使用DFU烧录软件烧录，无需SWD烧录</div>
@@ -256,7 +256,8 @@
       <div class="card">
         <div>版本号：V1 更新时间：2025-05-05</div>
         <div>初始版本，支持串口通信、时间/日期设置、EEPROM 操作等基本功能。</div>
-
+        <div>版本号：V2 更新时间：2025-05-19</div>
+        <div>部分同学不想焊接气压计增加成本，V2版本增加了气压计识别函数，如果未识别到气压计，则不进行高度的绘制，防止I2Cbusy卡死。</div>
       </div>
       
 
