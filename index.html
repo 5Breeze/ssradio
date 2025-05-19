@@ -204,13 +204,29 @@
     <div class="card">
       <h2>💻 开发选项</h2>
       <h3>工程文件下载</h3>
-      <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio.html', '_blank')">🔗 点击打开焊接辅助文件</button>
-      <div></div>
-      <button onclick="window.open('https://5breeze.github.io/ssradio/3D.zip', '_blank')">🔗 点击下载3D模型文件</button>
-      <div></div>
-      <button onclick="window.open('https://5breeze.github.io/ssradio/SSradio制板文件.zip', '_blank')">🔗 点击下载Gerber制板文件</button>
-      <div>提示：连接USB，按下按钮中键后上电进入DFU烧录模式，无需SWD烧录</div>
-      <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio_V1.hex', '_blank')">🔗 点击下载V1版本固件</button>
+
+      
+
+
+      <div class="row">
+        <div class="col">
+          <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio.html', '_blank')">🔗 点击打开焊接辅助文件</button>
+        </div>
+        <div class="col">
+          <button onclick="window.open('https://5breeze.github.io/ssradio/3D.zip', '_blank')">🔗 点击下载3D模型文件</button>
+        </div>
+      </div>      
+      <div class="row">
+        <div class="col">
+          <button onclick="window.open('https://5breeze.github.io/ssradio/SSradio制板文件.zip', '_blank')">🔗 点击下载Gerber制板文件</button>
+        </div>
+        <div class="col">
+          <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio_V1.hex', '_blank')">🔗 点击下载V1版本固件</button>
+        </div>
+      </div>
+      <div>提示：本设备支持DFU下载，下载STM32DFU驱动，连接USB，按下按钮中键后上电进入DFU烧录模式，使用DFU烧录软件烧录，无需SWD烧录</div>
+      
+
       <h3>EEPROM 操作</h3>
       <div class="row">
         <div class="col">
@@ -230,6 +246,17 @@
           </div>
         </div>
       </div>
+
+      
+      <h3>版本更新说明</h3>
+      <div class="card">
+        <div>版本号：V1 更新时间：2025-05-05</div>
+        <div>初始版本，支持串口通信、时间/日期设置、EEPROM 操作等基本功能。</div>
+
+      </div>
+      
+
+
     </div>
   </div>
 
@@ -339,6 +366,18 @@
       sendCmd(`eeprom_write_block 100 ${hex}`);
     }
   </script>
-
+  <!-- 添加 Service Worker 注册代码 -->
+  <script>
+    // 注册 Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+          console.log('ServiceWorker 注册成功: ', registration.scope);
+        }).catch(function(err) {
+          console.log('ServiceWorker 注册失败: ', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
