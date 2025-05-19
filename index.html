@@ -159,6 +159,7 @@
       }
     }
   </style>
+  <script src="usbDfuDevice.js"></script>
 </head>
 <body>
   <div class="container">
@@ -204,7 +205,25 @@
       <h2>📠 串口终端</h2>
       <textarea id="terminal" readonly></textarea>
     </div>
+	<div class="card">
+  <h2>🧪 STM32 DFU 在线升级</h2>
+  <div>提示：本设备支持DFU下载，下载STM32DFU驱动，连接USB，按下按钮中键后上电进入DFU烧录模式，无需SWD烧录</div>
+  <p>固件需为小于128KB的bin或hex固件，使用 WebUSB 协议在线升级 STM32 固件。推荐使用 Chrome 浏览器。</p>
 
+  <div class="row">
+    <input id="fileLocationBox" type="url" value="https://5breeze.github.io/ssradio/123.bin">
+  </div>
+  <div class="row">
+    <input id="flashSizeBox" type="text" value="0x20000">
+    <input id="pageSizeBox" type="text" value="128">
+  </div>
+
+  <div class="row">
+    <button id="connectProgramButton">🔌 连接并烧录</button>
+  </div>
+
+  <progress id="progressBar" value="0" max="100" style="width:100%; margin-top: 1rem;"></progress>
+</div>
     <div class="card">
       <h2>💻 开发选项</h2>
       <h3>工程文件下载</h3>
@@ -228,7 +247,7 @@
           <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio_V2.hex', '_blank')">🔗 点击下载V2版本固件</button>
         </div>
       </div>
-      <div>提示：本设备支持DFU下载，下载STM32DFU驱动，连接USB，按下按钮中键后上电进入DFU烧录模式，使用DFU烧录软件烧录，无需SWD烧录</div>
+      
       
 
       <h3>EEPROM 操作</h3>
@@ -260,11 +279,16 @@
          <div class="card">
         <div>版本号：V2 更新时间：2025-05-19</div>
         <div>部分同学不想焊接气压计增加成本，V2版本增加了气压计识别函数，如果未识别到气压计，则不进行高度的绘制，防止I2Cbusy卡死。</div>
-      </div>
+      
+
+</div>
       
 
 
     </div>
+	
+
+	
   </div>
 
   <script>
@@ -386,5 +410,51 @@
       });
     }
   </script>
+
+<script>
+  let dfu = new usbDfuDevice();
+
+  const fileLocationBox = document.getElementById('fileLocationBox');
+  const flashSizeBox = document.getElementById('flashSizeBox');
+  const pageSizeBox = document.getElementById('pageSizeBox');
+  const connectProgramButton = document.getElementById('connectProgramButton');
+  const progressBar = document.getElementById('progressBar');
+
+  connectProgramButton.addEventListener('click', function () {
+    startUpdate();
+  });
+
+  async function startUpdate() {
+    connectProgramButton.disabled = true;
+    try {
+      if (fileLocationBox.value === "") throw ("❌ 未提供固件链接");
+
+      let response = await fetch(fileLocationBox.value);
+      if (!response.ok) throw ("❌ 错误: " + response.status + " " + response.statusText);
+
+      let fileArr = await response.arrayBuffer();
+      await dfu.runUpdateSequence(fileArr, flashSizeBox.value, pageSizeBox.value);
+      alert("✅ 烧录完成！");
+    } catch (error) {
+      dfuDisconnectHandler();
+      alert(error);
+    }
+  }
+
+  function dfuStatusHandler(status) {
+    connectProgramButton.innerHTML = status;
+  }
+
+  function dfuProgressHandler(value) {
+    progressBar.value = value;
+  }
+
+  function dfuDisconnectHandler() {
+    connectProgramButton.innerHTML = "🔌 连接并烧录";
+    connectProgramButton.disabled = false;
+    progressBar.value = 0;
+  }
+</script>
 </body>
 </html>
+
