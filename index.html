@@ -198,8 +198,19 @@
       <button class="btn-success" onclick="write16BytesToEEPROM()">💾 写入授权码</button>
 
       <h2>⚙️ 系统操作</h2>
-      <button class="btn-danger" onclick="sendCmd('reboot')">🔄 重启设备</button>
-    </div>
+
+      <div class="row">
+        <div class="col">
+          <button class="btn-danger" onclick="sendCmd('enterdfu')">🔥 烧录模式</button>
+        </div>
+        <div class="col">
+          <button class="btn-danger" onclick="sendCmd('reboot')">🔄 重启设备</button>
+        </div>
+      </div>
+
+
+
+</div>
 
     <div class="card">
       <h2>📠 串口终端</h2>
@@ -207,9 +218,10 @@
     </div>
 	<div class="card">
   <h2>🧪 STM32 DFU 在线升级</h2>
-  <div>提示：本设备支持DFU下载，下载STM32DFU驱动，连接USB，按下按钮中键后上电进入DFU烧录模式，无需SWD烧录</div>
+  <div>提示：本设备支持DFU下载，下载STM32DFU驱动，连接USB，按下按钮中键后上电进入DFU烧录模式，无需SWD烧录。</div>
   <p>固件需为小于128KB的bin或hex固件，使用 WebUSB 协议在线升级 STM32 固件。推荐使用 Chrome 浏览器。</p>
-
+  <p></p>（首次烧录无需进该操作，已烧录设备按下设备控制的“进入烧录模式”的按钮也可）</p>
+  <p> Windows下可能需要安装DFU驱动：https://www.st.com/en/development-tools/stm32cubeprog.html</p>
   <div class="row">
     <input id="fileLocationBox" type="url" value="https://5breeze.github.io/ssradio/123.bin">
   </div>
