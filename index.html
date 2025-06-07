@@ -223,7 +223,7 @@
   <p></p>（首次烧录无需进该操作，已烧录设备按下设备控制的“进入烧录模式”的按钮也可）</p>
   <p> Windows下可能需要安装DFU驱动：https://www.st.com/en/development-tools/stm32cubeprog.html</p>
   <div class="row">
-    <input id="fileLocationBox" type="url" value="https://5breeze.github.io/ssradio/123.bin">
+    <input id="fileLocationBox" type="url" value="https://5breeze.github.io/ssradio/V3.bin">
   </div>
   <div class="row">
     <input id="flashSizeBox" type="text" value="0x20000">
@@ -256,7 +256,7 @@
           <button onclick="window.open('https://5breeze.github.io/ssradio/SSradio制板文件.zip', '_blank')">🔗 点击下载Gerber制板文件</button>
         </div>
         <div class="col">
-          <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio_V2.hex', '_blank')">🔗 点击下载V2版本固件</button>
+          <button onclick="window.open('https://5breeze.github.io/ssradio/SSRadio_V3.hex', '_blank')">🔗 点击下载V3版本固件</button>
         </div>
       </div>
       
@@ -291,7 +291,9 @@
          <div class="card">
         <div>版本号：V2 更新时间：2025-05-19</div>
         <div>部分同学不想焊接气压计增加成本，V2版本增加了气压计识别函数，如果未识别到气压计，则不进行高度的绘制，防止I2Cbusy卡死。</div>
-      
+               <div class="card">
+        <div>版本号：V3 更新时间：2025-06-07</div>
+        <div> 修复了电量显示不正确的bug，原因来自vref的channel影响了vbat的channel的切换，所以不添加矫正了；更改了气压计的逻辑，稳定更快了；修复了一些奇奇怪怪的bug，恢复出厂设置的音量改为0，但是恢复不成功...</div>
 
 </div>
       
